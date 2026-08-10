@@ -36,4 +36,4 @@ jobs:
           cargo clippy -- -D warnings
 
       - name: Check build
-        run: cargo tauri build
+        run: pnpm tauri build

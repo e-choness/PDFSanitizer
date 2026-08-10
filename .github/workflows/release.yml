@@ -35,7 +35,7 @@ jobs:
         run: pnpm install
 
       - name: Build Tauri app
-        run: cargo tauri build --target ${{ matrix.target }}
+        run: pnpm tauri build --target ${{ matrix.target }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
