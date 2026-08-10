@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { invoke } from '@tauri-apps/api/tauri';
+	import { invoke } from '@tauri-apps/api/core';
 	import { listen } from '@tauri-apps/api/event';
 	import FileList from './components/FileList.svelte';
 	import Settings from './components/Settings.svelte';

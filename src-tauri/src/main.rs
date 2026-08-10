@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
-use tauri::{State, Manager};
+use tauri::{Emitter, State};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SanitizationSettings {
@@ -83,7 +83,7 @@ async fn process_files(
                 match pdf_sanitizer::sanitize_pdf(&file_path, settings.as_ref()).await {
                     Ok((_, output_size)) => {
                         if let Err(e) = move_original_pdf(&file_path, &settings.output_folder) {
-                            let _ = app_handle.emit_all(
+                            let _ = app_handle.emit(
                                 "file_error",
                                 serde_json::json!({
                                     "id": file_id,
@@ -93,7 +93,7 @@ async fn process_files(
                             return;
                         }
 
-                        let _ = app_handle.emit_all(
+                        let _ = app_handle.emit(
                             "file_complete",
                             serde_json::json!({
                                 "id": file_id,
@@ -102,7 +102,7 @@ async fn process_files(
                         );
                     }
                     Err(e) => {
-                        let _ = app_handle.emit_all(
+                        let _ = app_handle.emit(
                             "file_error",
                             serde_json::json!({
                                 "id": file_id,

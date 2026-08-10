@@ -1,28 +1,17 @@
 {
-  "package": {
-    "productName": "PDF Sanitizer",
-    "version": "1.0.0"
-  },
+  "productName": "PDF Sanitizer",
+  "version": "1.0.0",
+  "identifier": "com.pdfsanitizer.app",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
     "devUrl": "http://localhost:5173",
     "frontendDist": "../dist"
   },
-  "tauri": {
-    "allowlist": {
-      "shell": {
-        "open": true
-      },
-      "dialog": {
-        "open": true
-      }
-    },
-    "bundle": {
-      "identifier": "com.pdfsanitizer.app"
-    },
+  "app": {
     "windows": [
       {
+        "label": "main",
         "fullscreen": false,
         "height": 800,
         "resizable": true,
@@ -33,5 +22,10 @@
     "security": {
       "csp": null
     }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": ["icons/icon.ico"]
   }
 }

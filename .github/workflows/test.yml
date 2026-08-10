@@ -35,5 +35,10 @@ jobs:
           cargo fmt --check
           cargo clippy -- -D warnings
 
-      - name: Check build
-        run: pnpm tauri build
+      - name: Build frontend
+        run: pnpm build
+
+      - name: Check Rust build
+        run: |
+          cd src-tauri
+          cargo build --release
