@@ -140,21 +140,13 @@ fn move_original_pdf(original_path: &str, destination_folder: &str) -> Result<()
 }
 
 fn main() {
-    let default_settings = SanitizationSettings {
-        remove_metadata: true,
-        remove_scripts: true,
-        remove_embedded_files: true,
-        compress_images: false,
-        high_compression: false,
-        strip_external_links: false,
-        font_subsetting: false,
-        max_concurrent: 4,
-        output_folder: String::new(),
-    };
+    // Load settings from disk, or use defaults if not found
+    let initial_settings = settings::load_settings()
+        .unwrap_or_else(|_| settings::default_settings());
 
     tauri::Builder::default()
         .manage(AppState {
-            settings: Arc::new(Mutex::new(default_settings)),
+            settings: Arc::new(Mutex::new(initial_settings)),
         })
         .invoke_handler(tauri::generate_handler![
             load_settings,

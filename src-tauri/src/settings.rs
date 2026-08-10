@@ -13,7 +13,6 @@ pub fn save_settings(settings: &SanitizationSettings) -> Result<(), String> {
     Ok(())
 }
 
-#[allow(dead_code)]
 pub fn load_settings() -> Result<SanitizationSettings, String> {
     let path = get_settings_path();
 
@@ -32,7 +31,6 @@ fn get_settings_path() -> PathBuf {
     config_dir.join("pdf-sanitizer").join(SETTINGS_FILE)
 }
 
-#[allow(dead_code)]
 pub fn default_settings() -> SanitizationSettings {
     SanitizationSettings {
         remove_metadata: true,
