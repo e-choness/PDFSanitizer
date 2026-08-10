@@ -1,6 +1,8 @@
 {
-  "productName": "PDF Sanitizer",
-  "version": "1.0.0",
+  "package": {
+    "productName": "PDF Sanitizer",
+    "version": "1.0.0"
+  },
   "build": {
     "before-dev-command": "pnpm dev",
     "before-build-command": "pnpm build",
