@@ -9,9 +9,9 @@ mod settings;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
-use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::atomic::AtomicU32;
 use std::sync::{Arc, Mutex};
-use tauri::State;
+use tauri::{State, Manager};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SanitizationSettings {
@@ -52,13 +52,17 @@ fn save_settings(settings: SanitizationSettings, state: State<AppState>) {
 
 #[tauri::command]
 async fn select_folder(app_handle: tauri::AppHandle) -> Option<String> {
-    match tauri::api::dialog::FileDialogBuilder::new()
-        .title("Select Output Folder")
-        .pick_folder(Some(&app_handle.get_window("main").unwrap()))
-        .await
-    {
-        Ok(Some(path)) => Some(path.to_string_lossy().to_string()),
-        _ => None,
+    if let Some(window) = app_handle.get_window("main") {
+        match tauri::api::dialog::FileDialogBuilder::new()
+            .set_title("Select Output Folder")
+            .pick_folder(Some(&window))
+            .await
+        {
+            Ok(Some(path)) => Some(path.to_string_lossy().to_string()),
+            _ => None,
+        }
+    } else {
+        None
     }
 }
 

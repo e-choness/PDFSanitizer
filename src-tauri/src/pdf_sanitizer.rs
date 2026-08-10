@@ -19,22 +19,34 @@ pub async fn sanitize_pdf(
 
     // Remove metadata if requested
     if settings.remove_metadata {
-        output_bytes = remove_metadata(output_bytes).unwrap_or(output_bytes);
+        match remove_metadata(output_bytes) {
+            Ok(result) => output_bytes = result,
+            Err(_) => {} // keep current bytes if operation fails
+        }
     }
 
     // Remove scripts if requested
     if settings.remove_scripts {
-        output_bytes = remove_scripts(output_bytes).unwrap_or(output_bytes);
+        match remove_scripts(output_bytes) {
+            Ok(result) => output_bytes = result,
+            Err(_) => {} // keep current bytes if operation fails
+        }
     }
 
     // Remove embedded files if requested
     if settings.remove_embedded_files {
-        output_bytes = remove_embedded_files(output_bytes).unwrap_or(output_bytes);
+        match remove_embedded_files(output_bytes) {
+            Ok(result) => output_bytes = result,
+            Err(_) => {} // keep current bytes if operation fails
+        }
     }
 
     // Strip external links if requested
     if settings.strip_external_links {
-        output_bytes = strip_external_links(output_bytes).unwrap_or(output_bytes);
+        match strip_external_links(output_bytes) {
+            Ok(result) => output_bytes = result,
+            Err(_) => {} // keep current bytes if operation fails
+        }
     }
 
     // Write sanitized PDF to original location
@@ -111,13 +123,13 @@ fn remove_pdf_dictionary_values(text: &str, keys: &[&str]) -> String {
     let mut result = text.to_string();
 
     for key in keys {
-        // Collect lines first to avoid borrow conflict
-        let lines: Vec<&str> = result.lines().collect();
+        // Collect lines as owned strings to avoid borrow conflicts
+        let lines: Vec<String> = result.lines().map(|s| s.to_string()).collect();
 
         // Simple replacement - removes the entry
         for line in lines {
             if line.contains(key) {
-                result = result.replace(line, "");
+                result = result.replace(&line, "");
             }
         }
     }
