@@ -8,7 +8,7 @@
     "devUrl": "http://localhost:5173",
     "frontendDist": "../dist"
   },
-  "app": {
+  "tauri": {
     "windows": [
       {
         "fullscreen": false,
