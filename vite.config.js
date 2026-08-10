@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     target: 'esnext',
     minify: false,
-    outDir: 'src-tauri/tauri-dist',
+    outDir: 'dist',
     emptyOutDir: true,
   },
 })
