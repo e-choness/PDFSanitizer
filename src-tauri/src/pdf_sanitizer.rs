@@ -111,14 +111,12 @@ fn remove_pdf_dictionary_values(text: &str, keys: &[&str]) -> String {
     let mut result = text.to_string();
 
     for key in keys {
-        // Match patterns like /Key (value) or /Key [value]
-        let pattern_paren = format!(r"{}\s*\([^)]*\)", key);
-        let pattern_bracket = format!(r"{}\s*\[[^\]]*\]", key);
+        // Collect lines first to avoid borrow conflict
+        let lines: Vec<&str> = result.lines().collect();
 
         // Simple replacement - removes the entry
-        for line in result.lines() {
+        for line in lines {
             if line.contains(key) {
-                // This is a simplified approach
                 result = result.replace(line, "");
             }
         }
