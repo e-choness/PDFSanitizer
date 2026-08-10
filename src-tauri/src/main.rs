@@ -86,23 +86,32 @@ async fn process_files(
                 match pdf_sanitizer::sanitize_pdf(&file_path, settings.as_ref()).await {
                     Ok((_, output_size)) => {
                         if let Err(e) = move_original_pdf(&file_path, &settings.output_folder) {
-                            let _ = app_handle.emit_all("file_error", serde_json::json!({
-                                "id": file_id,
-                                "error": format!("Failed to move original: {}", e)
-                            }));
+                            let _ = app_handle.emit_all(
+                                "file_error",
+                                serde_json::json!({
+                                    "id": file_id,
+                                    "error": format!("Failed to move original: {}", e)
+                                }),
+                            );
                             return;
                         }
 
-                        let _ = app_handle.emit_all("file_complete", serde_json::json!({
-                            "id": file_id,
-                            "output_size": output_size,
-                        }));
+                        let _ = app_handle.emit_all(
+                            "file_complete",
+                            serde_json::json!({
+                                "id": file_id,
+                                "output_size": output_size,
+                            }),
+                        );
                     }
                     Err(e) => {
-                        let _ = app_handle.emit_all("file_error", serde_json::json!({
-                            "id": file_id,
-                            "error": e
-                        }));
+                        let _ = app_handle.emit_all(
+                            "file_error",
+                            serde_json::json!({
+                                "id": file_id,
+                                "error": e
+                            }),
+                        );
                     }
                 }
             });
@@ -124,13 +133,11 @@ fn move_original_pdf(original_path: &str, destination_folder: &str) -> Result<()
     }
 
     let original = PathBuf::from(original_path);
-    let file_name = original.file_name()
-        .ok_or("Invalid file name")?;
+    let file_name = original.file_name().ok_or("Invalid file name")?;
 
     let destination = PathBuf::from(destination_folder).join(file_name);
 
-    fs::rename(&original, &destination)
-        .map_err(|e| e.to_string())?;
+    fs::rename(&original, &destination).map_err(|e| e.to_string())?;
 
     Ok(())
 }
