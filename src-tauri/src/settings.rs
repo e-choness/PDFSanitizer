@@ -1,16 +1,14 @@
 use crate::SanitizationSettings;
-use std::path::PathBuf;
 use std::fs;
+use std::path::PathBuf;
 
 const SETTINGS_FILE: &str = "settings.json";
 
 pub fn save_settings(settings: &SanitizationSettings) -> Result<(), String> {
-    let json = serde_json::to_string_pretty(settings)
-        .map_err(|e| e.to_string())?;
+    let json = serde_json::to_string_pretty(settings).map_err(|e| e.to_string())?;
 
     let path = get_settings_path();
-    fs::write(path, json)
-        .map_err(|e| e.to_string())?;
+    fs::write(path, json).map_err(|e| e.to_string())?;
 
     Ok(())
 }
@@ -22,16 +20,13 @@ pub fn load_settings() -> Result<SanitizationSettings, String> {
         return Ok(default_settings());
     }
 
-    let json = fs::read_to_string(path)
-        .map_err(|e| e.to_string())?;
+    let json = fs::read_to_string(path).map_err(|e| e.to_string())?;
 
-    serde_json::from_str(&json)
-        .map_err(|e| e.to_string())
+    serde_json::from_str(&json).map_err(|e| e.to_string())
 }
 
 fn get_settings_path() -> PathBuf {
-    let config_dir = dirs::config_dir()
-        .unwrap_or_else(|| PathBuf::from("."));
+    let config_dir = dirs::config_dir().unwrap_or_else(|| PathBuf::from("."));
 
     config_dir.join("pdf-sanitizer").join(SETTINGS_FILE)
 }

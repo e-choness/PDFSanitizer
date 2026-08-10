@@ -1,6 +1,6 @@
 use crate::SanitizationSettings;
-use std::path::PathBuf;
 use std::fs;
+use std::path::PathBuf;
 
 pub async fn sanitize_pdf(
     input_path: &str,
@@ -13,33 +13,29 @@ pub async fn sanitize_pdf(
     }
 
     // Read original PDF
-    let pdf_bytes = fs::read(&input)
-        .map_err(|e| format!("Failed to read PDF: {}", e))?;
+    let pdf_bytes =
+        fs::read(&input).map_err(|e| format!("Failed to read PDF: {}", e))?;
 
     let mut output_bytes = pdf_bytes.clone();
 
     // Remove metadata if requested
     if settings.remove_metadata {
-        output_bytes = remove_metadata(output_bytes)
-            .unwrap_or(output_bytes);
+        output_bytes = remove_metadata(output_bytes).unwrap_or(output_bytes);
     }
 
     // Remove scripts if requested
     if settings.remove_scripts {
-        output_bytes = remove_scripts(output_bytes)
-            .unwrap_or(output_bytes);
+        output_bytes = remove_scripts(output_bytes).unwrap_or(output_bytes);
     }
 
     // Remove embedded files if requested
     if settings.remove_embedded_files {
-        output_bytes = remove_embedded_files(output_bytes)
-            .unwrap_or(output_bytes);
+        output_bytes = remove_embedded_files(output_bytes).unwrap_or(output_bytes);
     }
 
     // Strip external links if requested
     if settings.strip_external_links {
-        output_bytes = strip_external_links(output_bytes)
-            .unwrap_or(output_bytes);
+        output_bytes = strip_external_links(output_bytes).unwrap_or(output_bytes);
     }
 
     // Write sanitized PDF to original location
@@ -58,16 +54,13 @@ fn remove_metadata(pdf_bytes: Vec<u8>) -> Result<Vec<u8>, String> {
     let mut result = pdf_str.to_string();
 
     // Remove common metadata fields
-    result = remove_pdf_dictionary_values(&result, &[
-        "/Producer",
-        "/Creator",
-        "/CreationDate",
-        "/ModDate",
-        "/Author",
-        "/Subject",
-        "/Title",
-        "/Keywords",
-    ]);
+    result = remove_pdf_dictionary_values(
+        &result,
+        &[
+            "/Producer", "/Creator", "/CreationDate", "/ModDate", "/Author",
+            "/Subject", "/Title", "/Keywords",
+        ],
+    );
 
     Ok(result.into_bytes())
 }
@@ -78,12 +71,7 @@ fn remove_scripts(pdf_bytes: Vec<u8>) -> Result<Vec<u8>, String> {
     let mut result = pdf_str.to_string();
 
     // Remove /JS, /JavaScript, /OpenAction, /AA (Additional Actions)
-    result = remove_pdf_references(&result, &[
-        "/JS",
-        "/JavaScript",
-        "/OpenAction",
-        "/AA",
-    ]);
+    result = remove_pdf_references(&result, &["/JS", "/JavaScript", "/OpenAction", "/AA"]);
 
     Ok(result.into_bytes())
 }
@@ -94,10 +82,7 @@ fn remove_embedded_files(pdf_bytes: Vec<u8>) -> Result<Vec<u8>, String> {
     let mut result = pdf_str.to_string();
 
     // Remove /EmbeddedFile references and /EmbeddedFile entries
-    result = remove_pdf_references(&result, &[
-        "/EmbeddedFile",
-        "/Names",
-    ]);
+    result = remove_pdf_references(&result, &["/EmbeddedFile", "/Names"]);
 
     Ok(result.into_bytes())
 }
@@ -109,13 +94,10 @@ fn strip_external_links(pdf_bytes: Vec<u8>) -> Result<Vec<u8>, String> {
 
     // Remove /URI links and external link types
     result = result.replace("/URI (", "/URI ()");
-    result = remove_pdf_references(&result, &[
-        "/GoToR",
-        "/Launch",
-        "/GoToE",
-        "/ImportData",
-        "/OpenAction",
-    ]);
+    result = remove_pdf_references(
+        &result,
+        &["/GoToR", "/Launch", "/GoToE", "/ImportData", "/OpenAction"],
+    );
 
     Ok(result.into_bytes())
 }

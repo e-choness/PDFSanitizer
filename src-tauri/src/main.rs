@@ -1,14 +1,17 @@
-#![cfg_attr(all(not(debug_assertions), target_os = "windows"), windows_subsystem = "windows")]
+#![cfg_attr(
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
+)]
 
 mod pdf_sanitizer;
 mod settings;
 
 use serde::{Deserialize, Serialize};
+use std::fs;
+use std::path::PathBuf;
+use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::{Arc, Mutex};
 use tauri::State;
-use std::path::PathBuf;
-use std::fs;
-use std::sync::atomic::{AtomicU32, Ordering};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SanitizationSettings {
