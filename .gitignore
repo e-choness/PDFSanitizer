@@ -48,4 +48,6 @@ Cargo.lock
 *.pdb
 
 build.log
+
+.openclaude
 # End of https://www.toptal.com/developers/gitignore/api/rust
