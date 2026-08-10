@@ -1,7 +1,9 @@
 {
-  "productName": "PDF Sanitizer",
-  "version": "1.0.0",
-  "identifier": "com.pdfsanitizer.app",
+  "package": {
+    "productName": "PDF Sanitizer",
+    "version": "1.0.0",
+    "identifier": "com.pdfsanitizer.app"
+  },
   "build": {
     "before-dev-command": "pnpm dev",
     "before-build-command": "pnpm build",
