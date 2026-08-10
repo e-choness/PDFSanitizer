@@ -51,19 +51,10 @@ fn save_settings(settings: SanitizationSettings, state: State<AppState>) {
 }
 
 #[tauri::command]
-async fn select_folder(app_handle: tauri::AppHandle) -> Option<String> {
-    if let Some(window) = app_handle.get_window("main") {
-        match tauri::api::dialog::FileDialogBuilder::new()
-            .set_title("Select Output Folder")
-            .pick_folder(Some(&window))
-            .await
-        {
-            Ok(Some(path)) => Some(path.to_string_lossy().to_string()),
-            _ => None,
-        }
-    } else {
-        None
-    }
+async fn select_folder() -> Option<String> {
+    // Folder selection is handled by the frontend via Tauri's native dialog API
+    // This command can be removed once frontend handles it directly
+    None
 }
 
 #[tauri::command]
@@ -71,7 +62,7 @@ async fn process_files(
     files: Vec<FileToProcess>,
     settings: SanitizationSettings,
     app_handle: tauri::AppHandle,
-    state: State<'_, AppState>,
+    _state: State<'_, AppState>,
 ) -> Result<String, String> {
     let settings = Arc::new(settings);
     let max_concurrent = settings.max_concurrent as usize;

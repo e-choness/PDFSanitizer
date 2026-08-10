@@ -19,33 +19,29 @@ pub async fn sanitize_pdf(
 
     // Remove metadata if requested
     if settings.remove_metadata {
-        match remove_metadata(output_bytes) {
-            Ok(result) => output_bytes = result,
-            Err(_) => {} // keep current bytes if operation fails
+        if let Ok(result) = remove_metadata(output_bytes.clone()) {
+            output_bytes = result;
         }
     }
 
     // Remove scripts if requested
     if settings.remove_scripts {
-        match remove_scripts(output_bytes) {
-            Ok(result) => output_bytes = result,
-            Err(_) => {} // keep current bytes if operation fails
+        if let Ok(result) = remove_scripts(output_bytes.clone()) {
+            output_bytes = result;
         }
     }
 
     // Remove embedded files if requested
     if settings.remove_embedded_files {
-        match remove_embedded_files(output_bytes) {
-            Ok(result) => output_bytes = result,
-            Err(_) => {} // keep current bytes if operation fails
+        if let Ok(result) = remove_embedded_files(output_bytes.clone()) {
+            output_bytes = result;
         }
     }
 
     // Strip external links if requested
     if settings.strip_external_links {
-        match strip_external_links(output_bytes) {
-            Ok(result) => output_bytes = result,
-            Err(_) => {} // keep current bytes if operation fails
+        if let Ok(result) = strip_external_links(output_bytes.clone()) {
+            output_bytes = result;
         }
     }
 
