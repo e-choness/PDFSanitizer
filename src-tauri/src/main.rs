@@ -51,11 +51,15 @@ fn save_settings(settings: SanitizationSettings, state: State<AppState>) {
 }
 
 #[tauri::command]
-async fn select_folder() -> Option<String> {
-    if let Ok(path) = rfd::FileDialog::new().pick_folder() {
-        return path.map(|p| p.to_string_lossy().to_string());
+async fn select_folder(app_handle: tauri::AppHandle) -> Option<String> {
+    match tauri::api::dialog::FileDialogBuilder::new()
+        .title("Select Output Folder")
+        .pick_folder(Some(&app_handle.get_window("main").unwrap()))
+        .await
+    {
+        Ok(Some(path)) => Some(path.to_string_lossy().to_string()),
+        _ => None,
     }
-    None
 }
 
 #[tauri::command]
