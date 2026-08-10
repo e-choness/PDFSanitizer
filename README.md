@@ -1,88 +1,151 @@
-# PDFSanitizer
-Renders possibly malicious PDF files and outputs harmless PDF files
+# PDF Sanitizer
 
-To do this, the PDF files are rendered and converted to images using PyMuPDF.
-The images are then saved to a new PDF file using img2pdf. This ensures no visual data is lost,
-but any scripts/external references/flash files are removed.
+A modern desktop application for sanitizing PDF files and removing potentially malicious content. Built with Tauri, Rust, and Svelte for a fast, lightweight, and beautiful user experience.
 
-<b>Instalation</b>: 
+## Features
 
-    git clone https://github.com/lacioffi/PDFSanitizer
-    cd PDFSanitizer
-    pip install -r requirements.txt 
+- **Drag & Drop UI** - Simple file management with drag-and-drop support or file selection
+- **Batch Processing** - Process multiple files concurrently (configurable 1-8 concurrent files)
+- **Customizable Sanitization Options**:
+  - Remove metadata (default ON)
+  - Remove scripts/JavaScript (default ON)
+  - Remove embedded files (default ON)
+  - Strip external links/URLs (default OFF)
+  - Font subsetting (default OFF)
+  - Image compression (default OFF)
+- **File Management**:
+  - Per-file progress tracking with visual progress bar
+  - Stop individual files during processing
+  - Automatic original PDF backup to configurable folder
+  - Sanitized PDF replaces original location
+- **Settings**:
+  - Choose backup folder for original PDFs
+  - Configure concurrent processing threads
+  - All settings persisted locally
 
-<b>Usage</b>: 
+## Building & Running with Docker
 
-    pdfsanitizer.py <filename> <output folder>
+### Prerequisites
 
-This project uses the following libraries:
-    
-    PyMuPDF - By Jorj X. McKie (@JorjMcKie)
-    
-    img2pdf - By Johannes Schauer Marin Rodrigues (josch@mister-muffin.de)
-    
-Special thanks to @CoolerVoid for helping with the sandboxing part <3
+- Docker installed on your system
+
+### Quick Start
+
+```bash
+# Clone and enter the repository
+git clone <repo-url>
+cd PDFSanitizer
+
+# Build the Docker image (one-time)
+docker build -t pdf-sanitizer .
+
+# Run the development environment (builds the app)
+docker-compose up
+```
+
+The application will be available at `http://localhost:5173` during development.
+
+### Building for Release
+
+```bash
+# Build inside Docker
+docker-compose run --rm app cargo tauri build
+
+# Find the executable in: src-tauri/target/release/
+```
+
+## Project Structure
+
+```
+.
+├── src/                          # Frontend (Svelte)
+│   ├── App.svelte                # Main app component
+│   ├── main.js                   # Entry point
+│   └── components/
+│       ├── FileList.svelte        # File management UI
+│       ├── FileRow.svelte         # Individual file row
+│       └── Settings.svelte        # Settings panel
+├── src-tauri/                     # Backend (Rust)
+│   ├── src/
+│   │   ├── main.rs               # Tauri commands & app setup
+│   │   ├── pdf_sanitizer.rs      # PDF processing logic
+│   │   └── settings.rs           # Settings persistence
+│   ├── Cargo.toml                # Rust dependencies
+│   └── tauri.conf.json           # Tauri configuration
+├── index.html                     # HTML template
+├── package.json                   # Frontend dependencies
+├── vite.config.js                # Vite configuration
+├── Dockerfile                     # Docker build configuration
+└── docker-compose.yml            # Docker compose setup
+```
+
+## Development
+
+### Local Setup (without Docker)
+
+```bash
+# Install Rust (if not already installed)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Install Node.js and pnpm
+# https://nodejs.org/ (v18+)
+npm install -g pnpm
+
+# Install dependencies
+pnpm install
+
+# Install Tauri CLI
+cargo install tauri-cli
+
+# Run in development mode
+cargo tauri dev
+```
+
+## How It Works
+
+1. **Drop or select PDF files** into the drag-drop area
+2. **Configure sanitization options** in the settings panel
+3. **Click "Start Converting"** to begin processing
+4. **Monitor progress** for each file with the progress bar
+5. **Original PDFs** are moved to your configured backup folder
+6. **Sanitized PDFs** remain in the original file location
 
 ## Security Considerations
 
-This script will render possibly malicious PDFs to generate the sanitized file using MuPDF, which has had exploits in the past:
-https://www.cvedetails.com/vulnerability-list/vendor_id-10846/product_id-20840/Artifex-Mupdf.html
-Therefore, assume the machine this runs on will be pwned eventually.
-  
-To mitigate this risk, I recommend two techinques:
+PDF processing involves parsing and rendering files which may contain exploits. The sanitizer:
 
-### Running the script on a Sandbox
+- Strips metadata, scripts, and embedded files
+- Re-renders PDFs to remove malicious content
+- Runs entirely locally - no network communication
+- Files are processed with configurable concurrency limits
 
-#### Firejail
+For maximum security with untrusted PDFs, consider:
 
-This sandbox will restrict all network access, unnecessary syscalls and reading/writing from unexpected files/folders. I recommend this method.
+- Running on an isolated machine
+- Processing in a sandboxed environment
+- Regular security audits of the sanitization logic
 
-Install it using:
+## Dependencies
 
-    sudo apt-get install firejail
+### Frontend
 
-The profile is already included in this repo, but it assumes you're running from ~/PDFSanitizer. Setup and use it by running the following commands:
+- Svelte 4.0
+- Tauri API (@tauri-apps/api)
+- Vite
 
-    cd ~
-    git clone https://github.com/lacioffi/PDFSanitizer
-    cd ~/PDFSanitizer/ 
-    firejail --profile=pdfsanitizer.profile python3 ~/PDFSanitizer/pdfsanitizer.py file.pdf ~/PDFSanitizer/out
+### Backend
 
-Plase note that the input file must be located in ~/PDFSanitizer.
-The output folder can have any name, but it must already exist and also be inside ~/PDFSanitizer.
+- Tauri 1.5
+- Rust 2021 edition
+- Tokio (async runtime)
+- Serde (serialization)
+- RFD (file dialogs)
 
-If you want to run PDFSanitizer from another folder, change the following line in "pdfsanitizer.profile":
+## License
 
-    whitelist ${HOME}/PDFSanitizer/
-    
-To wherever you're running the program from.
-   
+See LICENSE file for details.
 
-If you want the output folder or the input file to be outside of PDFSanitizer's folder, simply add a line in "pdfsanitizer.profile":
-    
-    whitelist /full/path/to/output/folder
-    whitelist /full/path/to/file.pdf
-    
-Again, please note that the output folder must already exist.
- 
+## Credits
 
-#### CloudFlare Sandbox
-
-This sandbox will restrict all network access and unnecessary syscalls, but will not restrict reading/writing to arbitrary files/folders.
-
-Download and build it from here: https://github.com/cloudflare/sandbox
-Take the generated "libsandbox.so" file, put it in this PDFSanitizer's folder and run the following command:
-
-    LD_PRELOAD=./libsandbox.so SECCOMP_SYSCALL_ALLOW="read:write:lseek:close:openat:brk:stat:munmap:fstat:getdents64:ioctl:rt_sigaction:mmap:mprotect:pread64:lstat:dup:mremap:futex:getegid:getuid:getgid:geteuid:sigaltstack:rt_sigprocmask:access:uname:fcntl:getcwd:readlink:sysinfo:arch_prctl:gettid:set_tid_address:set_robust_list:prlimit64:getrandom:exit_group" python3 pdfsanitizer.py file.pdf ./output
-
-
-### Running the script on an isolated environment
-
-For maximum security, run this script on an isolated, ephemeral instance or even a serverless environment. 
-Block all network communications, maybe kill the instance after the job is done, and only allow reading from an input folder/bucket
-and writing to an output folder/bucket.
-
-I didn't try this method, but I believe you can do it with some Cloud Majyks.
-
-## To-do
-This method removes EVERYTHING from the PDF. It would be nice to at least keep the text copy-pasteable.
+Original CLI implementation by Lucas Andrade Cioffi
+Modern desktop UI by Beili (Echo) Yin

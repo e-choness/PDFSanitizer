@@ -1,0 +1,23 @@
+services:
+  pdf-sanitizer:
+    build: .
+    container_name: pdf-sanitizer-dev
+    volumes:
+      - .:/app
+      - app-node-modules:/app/node_modules
+      - app-cargo-cache:/usr/local/cargo/registry
+      - app-target:/app/src-tauri/target
+    ports:
+      - "5173:5173"  # Vite dev server
+      - "8080:8080"  # Tauri webview
+    environment:
+      - RUST_LOG=debug
+      - RUST_BACKTRACE=1
+    working_dir: /app
+    stdin_open: true
+    tty: true
+
+volumes:
+  app-node-modules:
+  app-cargo-cache:
+  app-target:

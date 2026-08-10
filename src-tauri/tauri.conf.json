@@ -1,0 +1,25 @@
+{
+  "productName": "PDF Sanitizer",
+  "version": "1.0.0",
+  "identifier": "com.pdfsanitizer.app",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
+    "devUrl": "http://localhost:5173",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "fullscreen": false,
+        "height": 800,
+        "resizable": true,
+        "title": "PDF Sanitizer",
+        "width": 1200
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  }
+}
