@@ -13,8 +13,7 @@ pub async fn sanitize_pdf(
     }
 
     // Read original PDF
-    let pdf_bytes =
-        fs::read(&input).map_err(|e| format!("Failed to read PDF: {}", e))?;
+    let pdf_bytes = fs::read(&input).map_err(|e| format!("Failed to read PDF: {}", e))?;
 
     let mut output_bytes = pdf_bytes.clone();
 
@@ -57,8 +56,14 @@ fn remove_metadata(pdf_bytes: Vec<u8>) -> Result<Vec<u8>, String> {
     result = remove_pdf_dictionary_values(
         &result,
         &[
-            "/Producer", "/Creator", "/CreationDate", "/ModDate", "/Author",
-            "/Subject", "/Title", "/Keywords",
+            "/Producer",
+            "/Creator",
+            "/CreationDate",
+            "/ModDate",
+            "/Author",
+            "/Subject",
+            "/Title",
+            "/Keywords",
         ],
     );
 
