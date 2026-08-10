@@ -9,7 +9,6 @@ mod settings;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
-use std::sync::atomic::AtomicU32;
 use std::sync::{Arc, Mutex};
 use tauri::{State, Manager};
 
@@ -34,7 +33,6 @@ pub struct FileToProcess {
 
 pub struct AppState {
     settings: Arc<Mutex<SanitizationSettings>>,
-    active_tasks: Arc<AtomicU32>,
 }
 
 #[tauri::command]
@@ -157,7 +155,6 @@ fn main() {
     tauri::Builder::default()
         .manage(AppState {
             settings: Arc::new(Mutex::new(default_settings)),
-            active_tasks: Arc::new(AtomicU32::new(0)),
         })
         .invoke_handler(tauri::generate_handler![
             load_settings,
