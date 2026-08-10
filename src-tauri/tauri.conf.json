@@ -10,6 +10,14 @@
     "dist-dir": "../dist"
   },
   "tauri": {
+    "allowlist": {
+      "shell": {
+        "open": true
+      },
+      "dialog": {
+        "open": true
+      }
+    },
     "bundle": {
       "identifier": "com.pdfsanitizer.app"
     },
