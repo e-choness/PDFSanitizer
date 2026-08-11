@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-windows:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     strategy:
@@ -25,19 +25,45 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '24'
 
       - name: Install pnpm
-        run: npm install -g pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '9'
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build Tauri app
-        run: pnpm tauri build --no-bundle --target ${{ matrix.target }}
+      - name: Build frontend
+        run: pnpm build
+
+      - name: Cache cargo-xwin
+        id: cache-cargo-xwin
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/cargo-xwin
+            ~/.cargo/.crates.toml
+            ~/.cargo/.crates2.json
+          key: cargo-xwin-${{ runner.os }}-locked
+
+      - name: Install cargo-xwin
+        if: steps.cache-cargo-xwin.outputs.cache-hit != 'true'
+        run: cargo install cargo-xwin --locked
+
+      - name: Build Windows binary
+        run: cd src-tauri && cargo xwin build --release --target ${{ matrix.target }}
+        env:
+          TAURI_CONFIG: '{"build":{"devUrl":null}}'
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -54,5 +80,3 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
