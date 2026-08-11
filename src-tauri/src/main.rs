@@ -49,13 +49,6 @@ fn save_settings(settings: SanitizationSettings, state: State<AppState>) {
 }
 
 #[tauri::command]
-async fn select_folder() -> Option<String> {
-    // Folder selection is handled by the frontend via Tauri's native dialog API
-    // This command can be removed once frontend handles it directly
-    None
-}
-
-#[tauri::command]
 async fn process_files(
     files: Vec<FileToProcess>,
     settings: SanitizationSettings,
@@ -148,10 +141,10 @@ fn main() {
         .manage(AppState {
             settings: Arc::new(Mutex::new(initial_settings)),
         })
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             load_settings,
             save_settings,
-            select_folder,
             process_files
         ])
         .run(tauri::generate_context!())

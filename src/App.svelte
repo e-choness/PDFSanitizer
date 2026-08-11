@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { invoke } from '@tauri-apps/api/core';
 	import { listen } from '@tauri-apps/api/event';
+	import { open } from '@tauri-apps/plugin-dialog';
 	import FileList from './components/FileList.svelte';
 	import Settings from './components/Settings.svelte';
 	import './App.css';
@@ -52,23 +53,40 @@
 			);
 		});
 
+		// Use Tauri's drag-drop event to get real file paths
+		const unlistenDrop = await listen('tauri://drag-drop', (event) => {
+			dragActive = false;
+			const paths = event.payload.paths;
+			if (!paths) return;
+			addFilePaths(paths);
+		});
+
+		const unlistenDragOver = await listen('tauri://drag-over', () => {
+			dragActive = true;
+		});
+
+		const unlistenDragLeave = await listen('tauri://drag-leave', () => {
+			dragActive = false;
+		});
+
 		return () => {
 			unlistenComplete();
 			unlistenError();
 			unlistenProgress();
+			unlistenDrop();
+			unlistenDragOver();
+			unlistenDragLeave();
 		};
 	});
 
 	function handleDragEnter(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		dragActive = true;
 	}
 
 	function handleDragLeave(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		dragActive = false;
 	}
 
 	function handleDragOver(e) {
@@ -76,37 +94,45 @@
 		e.stopPropagation();
 	}
 
-	async function handleDrop(e) {
+	function handleDrop(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		dragActive = false;
+		// Handled by tauri://drag-drop listener in onMount
+	}
 
-		const items = e.dataTransfer.items;
-		if (!items) return;
+	function addFilePaths(paths) {
+		const pdfs = paths.filter(p => p.toLowerCase().endsWith('.pdf'));
+		const newFiles = pdfs.map(p => ({
+			id: Math.random(),
+			name: p.split(/[\\/]/).pop(),
+			path: p,
+			size: 0,
+			progress: 0,
+			status: 'pending',
+			error: null,
+			outputSize: null,
+			selected: true,
+		}));
+		files = [...files, ...newFiles];
+	}
 
-		for (let i = 0; i < items.length; i++) {
-			if (items[i].kind === 'file') {
-				const file = items[i].getAsFile();
-				if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-					files = [...files, {
-						id: Math.random(),
-						name: file.name,
-						path: file.webkitRelativePath || file.name,
-						size: file.size,
-						progress: 0,
-						status: 'pending',
-						error: null,
-						outputSize: null,
-						selected: true,
-					}];
-				}
-			}
+	async function addFiles() {
+		try {
+			const selected = await open({
+				multiple: true,
+				filters: [{ name: 'PDF', extensions: ['pdf'] }],
+			});
+			if (!selected) return;
+			const paths = Array.isArray(selected) ? selected : [selected];
+			addFilePaths(paths);
+		} catch (e) {
+			console.error('Failed to open file picker:', e);
 		}
 	}
 
 	async function selectFolder() {
 		try {
-			const folder = await invoke('select_folder');
+			const folder = await open({ directory: true, multiple: false });
 			if (folder) {
 				settings.outputFolder = folder;
 				await invoke('save_settings', { settings });
@@ -158,6 +184,7 @@
 			{handleDragLeave}
 			{handleDragOver}
 			{handleDrop}
+			{addFiles}
 			on:startProcessing={startProcessing}
 			on:selectFolder={selectFolder}
 		/>

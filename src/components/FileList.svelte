@@ -8,6 +8,7 @@
 	export let handleDragLeave = () => {};
 	export let handleDragOver = () => {};
 	export let handleDrop = () => {};
+	export let addFiles = () => {};
 
 	const dispatch = createEventDispatcher();
 
@@ -83,7 +84,7 @@
 				<div class="empty-icon">📄</div>
 				<p>Drag and drop PDF files here</p>
 				<p class="or">or</p>
-				<button class="select-btn" on:click={handleSelectFolderClick}>Select Folder</button>
+				<button class="select-btn" on:click={addFiles}>Add Files</button>
 			</div>
 		{:else}
 			<div class="file-rows">
