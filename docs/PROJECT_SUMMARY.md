@@ -124,7 +124,7 @@ docker-compose up
 git clone <repo>
 cd PDFSanitizer
 pnpm install
-cargo tauri dev
+pnpm tauri dev
 ```
 
 ---
@@ -175,7 +175,7 @@ cargo tauri dev
 
 **Backend:**
 - Rust 2021 edition - Memory-safe systems programming
-- Tauri 1.5 - Desktop app framework
+- Tauri 2.x - Desktop app framework
 - Tokio - Async runtime for concurrent processing
 - Serde/JSON - Settings serialization
 
@@ -226,17 +226,18 @@ cargo tauri dev
 ## 📦 Dependencies
 
 **Rust (Backend):**
-- tauri (1.5) - Desktop app framework
+- tauri (2.x) - Desktop app framework
+- tauri-plugin-dialog (2.x) - Native file/folder picker
 - tokio (1.0) - Async runtime
 - serde/serde_json - Serialization
 - dirs (5.0) - Config directory detection
-- rfd (0.12) - File picker dialogs
 - lopdf (0.32) - PDF parsing (optional enhancement)
 
 **Node.js (Frontend):**
 - svelte (4.0) - UI framework
-- @tauri-apps/api (1.5) - Tauri API bindings
-- vite (4.4) - Bundler
+- @tauri-apps/api (2.0) - Tauri API bindings
+- @tauri-apps/plugin-dialog (2.0) - File dialog frontend bindings
+- vite (5.4) - Bundler
 
 ---
 

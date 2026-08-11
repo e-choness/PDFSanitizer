@@ -48,9 +48,9 @@ src-tauri/
 ```
 
 ### Infrastructure
-- ✅ Docker development environment
-- ✅ GitHub Actions CI/CD (Windows, macOS, Linux)
-- ✅ Automated release builds
+- ✅ Docker cross-compilation (Windows .exe via cargo-xwin)
+- ✅ GitHub Actions CI/CD (Windows x64, ubuntu-latest runner)
+- ✅ Automated release builds on tag push
 - ✅ Version management
 
 **Files:**
@@ -127,12 +127,10 @@ docker-compose.yml              (Service orchestration)
 - [x] File size calculation
 
 ### Deployment ✅
-- [x] Windows build (.exe)
-- [x] macOS builds (Intel + Apple Silicon)
-- [x] Linux build (.AppImage)
-- [x] Docker development environment
-- [x] GitHub Actions automation
-- [x] Single-file executables (no dependencies)
+- [x] Windows build (.exe) via cargo-xwin cross-compilation
+- [x] Docker build environment (Linux containers → Windows .exe)
+- [x] GitHub Actions automation (ubuntu-latest runner)
+- [x] Single-file executable (no dependencies)
 
 ---
 
@@ -147,7 +145,7 @@ docker-compose.yml              (Service orchestration)
 | Documentation Files | 10 |
 | Lines of Code | ~500 (Svelte + Rust) |
 | Dependencies | 20+ (all specified in configs) |
-| Build Time | ~35-40 minutes (all platforms) |
+| Build Time | ~15-25 minutes (Windows, ubuntu-latest) |
 | Executable Size | 80-150 MB |
 
 ---
@@ -231,20 +229,10 @@ PDFSanitizer/
 ## ✨ What Users Will Get
 
 ### Windows Users
-- Download: `pdf-sanitizer.exe` (~100 MB)
+- Download: `pdf-sanitizer.exe` from GitHub Releases
 - Run: Double-click to start
 - No installation needed
 - No dependencies required
-
-### macOS Users
-- Download: `PDF Sanitizer.dmg` (~120 MB)
-- Install: Mount .dmg and drag to Applications
-- Run: Click Applications → PDF Sanitizer
-
-### Linux Users
-- Download: `pdf-sanitizer.AppImage` (~90 MB)
-- Install: `chmod +x pdf-sanitizer*.AppImage`
-- Run: `./pdf-sanitizer*.AppImage`
 
 ---
 
@@ -271,13 +259,13 @@ PDFSanitizer/
 
 ### Build Dependencies
 - Rust 1.70+
-- Node.js 18+
-- Docker (optional, for development)
+- Node.js 24+
+- Docker (optional, for cross-compiling Windows .exe)
 
 ### Key Libraries
-- **Frontend:** Svelte 4.0, Vite 4.4
-- **Backend:** Tauri 1.5, Tokio 1.0, Serde 1.0
-- **Utilities:** RFD (file dialogs), Dirs (config paths)
+- **Frontend:** Svelte 4.0, Vite 5.4, @tauri-apps/plugin-dialog 2.0
+- **Backend:** Tauri 2.x, Tokio 1.0, Serde 1.0
+- **Utilities:** tauri-plugin-dialog (file dialogs), Dirs (config paths)
 
 ---
 

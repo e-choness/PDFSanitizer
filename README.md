@@ -23,36 +23,29 @@ A modern desktop application for sanitizing PDF files and removing potentially m
   - Configure concurrent processing threads
   - All settings persisted locally
 
-## Building & Running with Docker
+## Building Windows Executable with Docker
 
 ### Prerequisites
 
-- Docker installed on your system
+- Docker installed (Linux containers mode)
 
-### Quick Start
+### Cross-compile Windows `.exe` from Linux
 
 ```bash
 # Clone and enter the repository
-git clone <repo-url>
+git clone https://github.com/e-choness/pdf-sanitizer.git
 cd PDFSanitizer
 
-# Build the Docker image (one-time)
-docker build -t pdf-sanitizer .
+# Build the Docker image (compiles Windows .exe via cargo-xwin)
+docker build -t pdf-sanitizer-builder .
 
-# Run the development environment (builds the app)
-docker-compose up
+# Extract the .exe
+docker create --name extract pdf-sanitizer-builder
+docker cp extract:/pdf-sanitizer.exe ./pdf-sanitizer.exe
+docker rm extract
 ```
 
-The application will be available at `http://localhost:5173` during development.
-
-### Building for Release
-
-```bash
-# Build inside Docker
-docker-compose run --rm app cargo tauri build
-
-# Find the executable in: src-tauri/target/release/
-```
+The resulting `pdf-sanitizer.exe` can be run on Windows without any installation.
 
 ## Project Structure
 
@@ -87,18 +80,15 @@ docker-compose run --rm app cargo tauri build
 # Install Rust (if not already installed)
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-# Install Node.js and pnpm
-# https://nodejs.org/ (v18+)
+# Install Node.js 24+ and pnpm
+# https://nodejs.org/
 npm install -g pnpm
 
 # Install dependencies
 pnpm install
 
-# Install Tauri CLI
-cargo install tauri-cli
-
 # Run in development mode
-cargo tauri dev
+pnpm tauri dev
 ```
 
 ## How It Works
@@ -130,16 +120,17 @@ For maximum security with untrusted PDFs, consider:
 ### Frontend
 
 - Svelte 4.0
-- Tauri API (@tauri-apps/api)
-- Vite
+- Tauri API (@tauri-apps/api 2.0)
+- Vite 5.4
+- @tauri-apps/plugin-dialog (native file picker)
 
 ### Backend
 
-- Tauri 1.5
+- Tauri 2.x
 - Rust 2021 edition
 - Tokio (async runtime)
 - Serde (serialization)
-- RFD (file dialogs)
+- tauri-plugin-dialog (file/folder dialogs)
 
 ## License
 

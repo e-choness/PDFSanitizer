@@ -73,13 +73,13 @@ v1.1.0
 
 4. **Monitor Progress**
    - Watch the workflow run
-   - Takes ~35-40 minutes for all platforms
+   - Takes ~15-25 minutes (Windows, ubuntu-latest)
    - Status shows orange (running), green (done), red (failed)
 
 5. **Download Beta**
    - Go to **Releases** tab
    - Find your beta version
-   - Download `.exe`, `.dmg`, or `.AppImage`
+   - Download `pdf-sanitizer.exe`
    - Release marked as "Pre-release" ⚠️
 
 ### Method 2: Using Git Commands
@@ -248,8 +248,6 @@ The `beta.yml` workflow:
 
 **Artifacts:**
 - Windows: `pdf-sanitizer.exe`
-- macOS: `PDF Sanitizer.dmg`
-- Linux: `pdf-sanitizer.AppImage`
 
 ---
 
@@ -306,8 +304,8 @@ A: As many as you want! There's no limit.
 **Q: Does beta affect my GitHub free plan limits?**
 A: Yes, same as stable builds (~35 min per build). Free plan has 2,000 min/month.
 
-**Q: Can I have beta for one platform only?**
-A: Not with current workflow. It builds all platforms. You could manually edit beta.yml to change this.
+**Q: Can I add more target platforms to beta builds?**
+A: Yes — edit `beta.yml` to add additional cargo-xwin targets or separate runners.
 
 **Q: What if beta build fails?**
 A: Check the workflow logs, fix the issue, and trigger again with same version.

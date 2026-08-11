@@ -37,9 +37,7 @@ git push origin v1.0.0
 1. Go to **GitHub Repo** → **Actions** tab
 2. Watch the **Build Release** workflow run
 3. It builds for:
-   - ✅ Windows (x64) → `.exe`
-   - ✅ macOS (Intel + Apple Silicon) → `.dmg`
-   - ✅ Linux → `.AppImage`
+   - ✅ Windows (x64) → `.exe` (cross-compiled via cargo-xwin on ubuntu-latest)
 
 ### Step 4: Download Executables
 
@@ -77,8 +75,8 @@ git push origin main
 
 ### Step 3: Monitor Build
 
-- Watch the workflow run (~35-40 minutes)
-- All three platforms build in parallel
+- Watch the workflow run (~15-25 minutes)
+- Windows binary built via cargo-xwin on ubuntu-latest
 
 ### Step 4: Download Beta Executables
 
@@ -163,15 +161,10 @@ Examples:
 - **test.yml** - Runs on every push to main/develop and PR
 
 ### Build Environments
-- **Windows:** windows-latest (Visual Studio)
-- **macOS:** macos-latest (both arm64 & x86_64)
-- **Linux:** ubuntu-latest (AppImage + deb)
+- **Windows:** ubuntu-latest (cross-compiled via cargo-xwin to x86_64-pc-windows-msvc)
 
 ### Build Time
-- Windows: ~10 minutes
-- macOS: ~15 minutes (2 architectures)
-- Linux: ~10 minutes
-- **Total:** ~35 minutes
+- Windows: ~15-25 minutes (includes cargo-xwin install + cross-compilation)
 
 ---
 
@@ -181,16 +174,6 @@ Examples:
 1. Download `pdf-sanitizer.exe` from Releases
 2. Run it (no installation needed!)
 3. If Windows SmartScreen warns, click "More info" → "Run anyway"
-
-### macOS Users
-1. Download `.dmg` file from Releases
-2. Open the `.dmg` file
-3. Drag app to Applications folder
-
-### Linux Users
-1. Download `.AppImage` file from Releases
-2. Make it executable: `chmod +x pdf-sanitizer*.AppImage`
-3. Run: `./pdf-sanitizer*.AppImage`
 
 ---
 
@@ -236,21 +219,19 @@ If larger, check for:
 If you want to build locally without GitHub Actions:
 
 ```bash
+# Build frontend first
+pnpm build
+
 # Build for current platform
-cargo tauri build
+cd src-tauri && cargo build --release
 
-# Build for specific target (Windows)
-cargo tauri build --target x86_64-pc-windows-msvc
-
-# Build for macOS
-cargo tauri build --target aarch64-apple-darwin  # Apple Silicon
-cargo tauri build --target x86_64-apple-darwin   # Intel
-
-# Build for Linux
-cargo tauri build --target x86_64-unknown-linux-gnu
+# Cross-compile Windows .exe from Linux/macOS (requires cargo-xwin)
+cargo install cargo-xwin --locked
+rustup target add x86_64-pc-windows-msvc
+cargo xwin build --release --target x86_64-pc-windows-msvc
 ```
 
-Output location: `src-tauri/target/release/`
+Windows output location: `src-tauri/target/x86_64-pc-windows-msvc/release/pdf-sanitizer.exe`
 
 ---
 

@@ -80,8 +80,8 @@ Done! ✨
 - Cross-platform builds (Windows, macOS, Linux)
 
 ### ✅ Ready to Deploy
-- GitHub Actions automation (builds on tag push)
-- Docker development environment
+- GitHub Actions automation (Windows build on tag push, ubuntu-latest)
+- Docker cross-compilation environment (Windows .exe via cargo-xwin)
 - Comprehensive documentation (9 guides)
 - Release management workflow
 
@@ -178,7 +178,7 @@ A: See [PUSH_TO_GITHUB.md](./PUSH_TO_GITHUB.md)
 A: No! Free plan has 2,000 minutes/month. Normal usage ~100-300 minutes/month.
 
 **Q: How long do builds take?**
-A: ~35-40 minutes for all platforms (Windows/Mac/Linux)
+A: ~15-25 minutes for Windows (ubuntu-latest runner with cargo-xwin)
 
 **Q: Can users run the .exe without installing?**
 A: Yes! Double-click and it runs. No dependencies needed.

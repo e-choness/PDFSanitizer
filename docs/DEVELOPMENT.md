@@ -59,8 +59,9 @@ PDFSanitizer/
 Frontend → Backend (Tauri IPC Commands):
 - `load_settings` - Load persisted settings
 - `save_settings` - Persist settings to disk
-- `select_folder` - Open file picker dialog
 - `process_files` - Start processing files with concurrency control
+
+File/folder dialogs are handled entirely on the frontend via `@tauri-apps/plugin-dialog` — no Rust command needed.
 
 Backend → Frontend (Tauri Events):
 - `file_progress` - Progress update for a file
@@ -92,24 +93,23 @@ Backend → Frontend (Tauri Events):
 
 ## Building
 
-### With Docker (Recommended for Development)
+### With Docker (Cross-compile Windows .exe)
 
 ```bash
-# Build the Docker image
-docker build -t pdf-sanitizer .
+# Build the Docker image (uses cargo-xwin to cross-compile Windows .exe from Linux)
+docker build -t pdf-sanitizer-builder .
 
-# Run development with hot reload
-docker-compose up
-
-# Build for release
-docker-compose run --rm app cargo tauri build
+# Extract the .exe
+docker create --name extract pdf-sanitizer-builder
+docker cp extract:/pdf-sanitizer.exe ./pdf-sanitizer.exe
+docker rm extract
 ```
 
 ### Local Setup (Requires Rust + Node.js)
 
 ```bash
 # Install Rust: https://rustup.rs/
-# Install Node.js 18+: https://nodejs.org/
+# Install Node.js 24+: https://nodejs.org/
 
 # Install pnpm
 npm install -g pnpm
@@ -117,14 +117,11 @@ npm install -g pnpm
 # Install dependencies
 pnpm install
 
-# Install Tauri CLI
-cargo install tauri-cli
-
 # Run in development mode
-cargo tauri dev
+pnpm tauri dev
 
 # Build release executable
-cargo tauri build
+pnpm tauri build
 ```
 
 ## Available Commands
@@ -144,8 +141,6 @@ pnpm preview    # Preview production build
 cd src-tauri
 cargo build              # Debug build
 cargo build --release   # Optimized release build
-cargo tauri dev         # Run in development
-cargo tauri build       # Build release executable
 cargo fmt               # Format code
 cargo clippy            # Lint and suggestions
 ```
@@ -235,9 +230,9 @@ cargo clippy            # Lint and suggestions
 
 ### Runtime Issues
 
-**"Select Folder" dialog not working**
-- Check file picker permissions (Windows/Linux/Mac varies)
-- Ensure config directory is writable
+**File picker / drag-and-drop not working**
+- Ensure `dialog:allow-open` is in `src-tauri/capabilities/default.json`
+- Ensure `tauri-plugin-dialog` is registered in `main.rs` via `.plugin(tauri_plugin_dialog::init())`
 
 **Files not moving to backup folder**
 - Verify output folder path is set in settings

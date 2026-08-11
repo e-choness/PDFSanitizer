@@ -49,10 +49,8 @@ git push origin v1.0.0
 ### What Happens Next:
 1. GitHub Actions automatically starts building
 2. Watch the build at: `https://github.com/YOUR_USERNAME/PDFSanitizer/actions`
-3. After ~35 minutes, all platforms are built:
-   - ✅ Windows `.exe`
-   - ✅ macOS `.dmg`
-   - ✅ Linux `.AppImage`
+3. After ~15-25 minutes:
+   - ✅ Windows `.exe` (cross-compiled via cargo-xwin on ubuntu-latest)
 
 ---
 
@@ -153,7 +151,7 @@ These were created and handle the automation:
 **Fix:** Correct the error, push to main, re-tag with new version
 
 ### "File not found in artifacts"
-- Builds take 30-40 minutes
+- Builds take 15-25 minutes
 - Wait for workflow to complete (green checkmark)
 - Check you're looking at the right workflow run
 
@@ -200,7 +198,7 @@ Create Git Tag (git tag vX.X.X)
     ↓
 Push Tag (git push origin vX.X.X)
     ↓
-GitHub Actions Builds (30-40 min)
+GitHub Actions Builds (15-25 min)
     ↓
 Download from Releases Page
     ↓

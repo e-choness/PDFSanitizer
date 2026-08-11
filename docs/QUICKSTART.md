@@ -1,26 +1,22 @@
 # Quick Start Guide
 
-## Fastest Path: Docker Setup (No Dependencies Needed)
+## Fastest Path: Docker (Build Windows .exe)
 
-### 1. Install Docker & Docker Compose
-- **Windows:** [Docker Desktop](https://www.docker.com/products/docker-desktop)
-- **Mac:** [Docker Desktop](https://www.docker.com/products/docker-desktop)
-- **Linux:** `sudo apt install docker.io docker-compose` (or equivalent for your distro)
+### 1. Install Docker Desktop (Linux containers mode)
+- **Windows:** [Docker Desktop](https://www.docker.com/products/docker-desktop) — ensure it's set to Linux containers
 
-### 2. Clone & Run
+### 2. Clone & Build
 
 ```bash
 git clone <repo-url>
 cd PDFSanitizer
-docker-compose up
+docker build -t pdf-sanitizer-builder .
+docker create --name extract pdf-sanitizer-builder
+docker cp extract:/pdf-sanitizer.exe ./pdf-sanitizer.exe
+docker rm extract
 ```
 
-That's it! The application will:
-- Download all dependencies automatically
-- Build in a container
-- Start the dev server
-
-Access the app at: **http://localhost:5173**
+The resulting `pdf-sanitizer.exe` is ready to run on any Windows machine (no installation required).
 
 ---
 
@@ -28,7 +24,7 @@ Access the app at: **http://localhost:5173**
 
 ### Prerequisites
 - **Rust 1.70+** → [Install](https://rustup.rs/)
-- **Node.js 18+** → [Install](https://nodejs.org/)
+- **Node.js 24+** → [Install](https://nodejs.org/)
 - **pnpm** → `npm install -g pnpm`
 
 ### Setup Steps
@@ -42,7 +38,7 @@ cd PDFSanitizer
 pnpm install
 
 # 3. Run development server
-cargo tauri dev
+pnpm tauri dev
 ```
 
 A window will open with the application running!
@@ -51,16 +47,18 @@ A window will open with the application running!
 
 ## Building for Release
 
-### With Docker
+### With Docker (cross-compiles Windows .exe)
 ```bash
-docker-compose run --rm pdf-sanitizer cargo tauri build
+docker build -t pdf-sanitizer-builder .
+docker create --name extract pdf-sanitizer-builder
+docker cp extract:/pdf-sanitizer.exe ./pdf-sanitizer.exe
+docker rm extract
 ```
-
-Find the executable in: `src-tauri/target/release/`
 
 ### Local Build
 ```bash
-cargo tauri build
+pnpm build
+cd src-tauri && cargo build --release
 ```
 
 ---
@@ -69,7 +67,7 @@ cargo tauri build
 
 ### Adding Files
 1. **Drag & Drop:** Grab PDF files and drop them onto the app window
-2. **Select Folder:** Click "Select Folder" button to browse
+2. **Add Files:** Click "Add Files" button to open a native file picker
 
 ### Processing
 1. **Choose Options:** Toggle sanitization options in the right panel
@@ -118,7 +116,7 @@ npm install -g pnpm
 ### Development
 ```bash
 # Watch file changes and hot-reload
-cargo tauri dev
+pnpm tauri dev
 
 # Format code
 cargo fmt
@@ -129,10 +127,10 @@ cargo clippy
 
 ### Production Build
 ```bash
-# Create optimized executable
-cargo tauri build
+# Create optimized executable (current platform)
+pnpm tauri build
 
-# Find output in: src-tauri/target/release/pdf-sanitizer
+# Find output in: src-tauri/target/release/
 ```
 
 ---

@@ -23,16 +23,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bulk operations (select all, remove all, stop all)
 - Settings persistence to local JSON
 - Configurable backup folder for original PDFs
-- Cross-platform builds:
-  - Windows (.exe)
-  - macOS (.dmg)
-  - Linux (.AppImage)
+- Windows build (.exe) via GitHub Actions (ubuntu-latest + cargo-xwin cross-compilation)
 - Docker development environment
 - GitHub Actions automated build pipeline
 - Comprehensive documentation
 
 ### Technical Details
-- Built with Tauri 1.5, Rust 2021, Svelte 4
+- Built with Tauri 2.x, Rust 2021, Svelte 4, Vite 5.4
+- Native file/folder dialogs via tauri-plugin-dialog (frontend-driven)
 - Zero runtime dependencies (single executable)
 - All processing runs locally (no network communication)
 - Configurable concurrent processing for performance tuning
@@ -95,9 +93,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Release History
 
-| Version | Date | Windows | macOS | Linux | Status |
-|---------|------|---------|-------|-------|--------|
-| 1.0.0 | 2026-08-09 | ✅ | ✅ | ✅ | Released |
+| Version | Date | Windows | Status |
+|---------|------|---------|--------|
+| 1.0.0 | 2026-08-09 | ✅ | Released |
 
 ---
 

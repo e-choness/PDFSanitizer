@@ -121,7 +121,7 @@ git push origin v1.0.0
    - 🟢 Green = Success
    - 🔴 Red = Failed
 
-**Total build time:** ~35-40 minutes
+**Total build time:** ~15-25 minutes (Windows only, ubuntu-latest runner)
 
 ---
 
@@ -142,25 +142,12 @@ Once builds complete:
 
 ### Windows
 ```
-pdf-sanitizer.exe (80-120 MB)
+pdf-sanitizer.exe
 ```
+- Cross-compiled from ubuntu-latest via cargo-xwin
 - Double-click to run
 - No installation needed
 - No dependencies required
-
-### macOS
-```
-PDF Sanitizer.dmg (100-150 MB)
-```
-- Mount .dmg
-- Drag to Applications folder
-
-### Linux
-```
-pdf-sanitizer.AppImage (70-100 MB)
-```
-- Make executable: `chmod +x pdf-sanitizer*.AppImage`
-- Run: `./pdf-sanitizer*.AppImage`
 
 ---
 
@@ -240,13 +227,13 @@ git status
 | Step | Status |
 |------|--------|
 | ✅ Code built | Complete |
-| ✅ Docker configured | Complete |
-| ✅ GitHub Actions ready | Complete |
+| ✅ Docker cross-compilation configured | Complete |
+| ✅ GitHub Actions ready (ubuntu-latest) | Complete |
 | ✅ Documentation written | Complete |
 | ⏳ **You are here** → Push to GitHub | Ready |
 | ⏳ Enable Actions | Next |
 | ⏳ Create release tag | Next |
-| ⏳ Wait for builds | Next |
+| ⏳ Wait for builds (~15-25 min) | Next |
 | ⏳ Download & test | Next |
 | ⏳ Share with users | Final |
 
